@@ -22,8 +22,8 @@ let kDebugLog = true
 // If this is set to "true", it will use the JSON file in the app
 // Set it to "false" to use the JSON file at the stationDataURL
 
-let useLocalStations = true
-let stationDataURL   = "http://yoururl.com/json/stations.json"
+//let useLocalStations = true
+//let stationDataURL   = "http://yoururl.com/json/stations.json"
 
 //**************************************
 // SEARCH BAR

@@ -14,11 +14,11 @@ import MediaPlayer
 // Updates the StationsViewController when the track changes
 //*****************************************************************
 
-protocol NowPlayingViewControllerDelegate: class {
-    func songMetaDataDidUpdate(track: Track)
-    func artworkDidUpdate(track: Track)
-    func trackPlayingToggled(track: Track)
-}
+//protocol NowPlayingViewControllerDelegate: class {
+//    func songMetaDataDidUpdate(track: Track)
+//    func artworkDidUpdate(track: Track)
+//    func trackPlayingToggled(track: Track)
+//}
 
 //*****************************************************************
 // NowPlayingViewController
@@ -46,7 +46,7 @@ class NowPlayingViewController: UIViewController {
     var track: Track!
     var mpVolumeSlider = UISlider()
     
-    weak var delegate: NowPlayingViewControllerDelegate?
+    //weak var delegate: NowPlayingViewControllerDelegate?
     
     //*****************************************************************
     // MARK: - ViewDidLoad
@@ -57,6 +57,16 @@ class NowPlayingViewController: UIViewController {
         
         // Setup handoff functionality - GH
         setupUserActivity()
+        
+        // Setup Radio Statio
+        // Add your radio station information here:
+        currentStation = RadioStation(
+            name: "WXYC - Chapel Hill",
+                streamURL: "http://audio-mp3.ibiblio.org:8000/wxyc.mp3",
+                imageURL: "https://backalleybikes.files.wordpress.com/2012/01/wxyc1.jpg",
+                desc: "Chapel Hill's finest",
+                longDesc: "WXYC 89.3 FM is the non-commercial student-run radio station of the University of North Carolina at Chapel Hill. We broadcast at 1100 watts from the student union on the UNC campus, 24 hours a day, 365 days a year. Our coverage area encompasses approximately 900 square miles in and around Chapel Hill, Durham, Pittsboro, Apex, and parts of Raleigh."
+        )
         
         // Set AlbumArtwork Constraints
         optimizeForDeviceSize()
@@ -202,7 +212,7 @@ class NowPlayingViewController: UIViewController {
         nowPlayingImageView.startAnimating()
         
         // Update StationsVC
-        self.delegate?.trackPlayingToggled(track: self.track)
+        //self.delegate?.trackPlayingToggled(track: self.track)
     }
     
     @IBAction func pausePressed() {
@@ -215,7 +225,7 @@ class NowPlayingViewController: UIViewController {
         nowPlayingImageView.stopAnimating()
         
         // Update StationsVC
-        self.delegate?.trackPlayingToggled(track: self.track)
+        //self.delegate?.trackPlayingToggled(track: self.track)
     }
     
     @IBAction func volumeChanged(_ sender:UISlider) {
@@ -349,7 +359,7 @@ class NowPlayingViewController: UIViewController {
                     self.updateLockScreen()
                     
                     // Call delegate function that artwork updated
-                    self.delegate?.artworkDidUpdate(track: self.track)
+                    //self.delegate?.artworkDidUpdate(track: self.track)
                 }
             }
             
@@ -366,7 +376,7 @@ class NowPlayingViewController: UIViewController {
             track.artworkLoaded = true
             
             // Call delegate function that artwork updated
-            self.delegate?.artworkDidUpdate(track: self.track)
+            //self.delegate?.artworkDidUpdate(track: self.track)
             
         } else {
             // No Station or API art found, use default art
@@ -556,7 +566,7 @@ class NowPlayingViewController: UIViewController {
                     self.songLabel.animate()
                     
                     // Update Stations Screen
-                    self.delegate?.songMetaDataDidUpdate(track: self.track)
+                    //self.delegate?.songMetaDataDidUpdate(track: self.track)
                     
                     // Query API for album art
                     self.resetAlbumArtwork()
