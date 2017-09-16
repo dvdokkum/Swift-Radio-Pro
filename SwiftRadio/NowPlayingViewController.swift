@@ -9,6 +9,11 @@
 import UIKit
 import MediaPlayer
 
+//create custom notification
+extension Notification.Name {
+static let onPlaylistUpdate = Notification.Name("on-playlist-update")
+}
+
 //*****************************************************************
 // Protocol
 // Updates the StationsViewController when the track changes
@@ -45,6 +50,8 @@ class NowPlayingViewController: UIViewController {
     let radioPlayer = Player.radio
     var track: Track!
     var mpVolumeSlider = UISlider()
+
+
     
     //weak var delegate: NowPlayingViewControllerDelegate?
     
@@ -95,7 +102,7 @@ class NowPlayingViewController: UIViewController {
         // Notification for MediaPlayer metadata updated
         NotificationCenter.default.addObserver(self,
             selector: #selector(NowPlayingViewController.metadataUpdated),
-            name: Notification.Name.MPMoviePlayerTimedMetadataUpdated,
+            name: Notification.Name.onPlaylistUpdate,
             object: nil)
         
         // Notification for AVAudioSession Interruption (e.g. Phone call)
@@ -122,6 +129,8 @@ class NowPlayingViewController: UIViewController {
         // Setup slider
         setupVolumeSlider()
         
+        var timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(self.checkPlaylist), userInfo: nil, repeats: true)
+        
     }
     
     func didBecomeActiveNotificationReceived() {
@@ -137,13 +146,52 @@ class NowPlayingViewController: UIViewController {
             name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
             object: nil)
         NotificationCenter.default.removeObserver(self,
-            name: Notification.Name.MPMoviePlayerTimedMetadataUpdated,
+            name: Notification.Name.onPlaylistUpdate,
             object: nil)
         NotificationCenter.default.removeObserver(self,
             name: Notification.Name.AVAudioSessionInterruption,
             object: AVAudioSession.sharedInstance())
     }
     
+
+    @objc func checkPlaylist() {
+
+        if track.isPlaying == true {
+            let queryURL = "http://wxyc.info/playlists/recentEntries?v=2&n=15"
+            let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            // Query API
+            DataManager.getPlaylistDataWithSuccess(queryURL: escapedURL!) { (data) in
+                
+                if kDebugLog {
+                    print("API SUCCESSFUL RETURN")
+                    print("url: \(escapedURL!)")
+                }
+
+            let json = JSON(data: data! as Data)
+            let id = json["playcuts"][0]["id"].stringValue
+
+            if id != self.track.id {
+               NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
+            }
+
+            } 
+        }
+    }
+            
+        //     let json = JSON(data: data! as Data)
+
+        //     let artist = json["playcuts"][0]["artistName"]
+        //     let song = json["playcuts"][0]["songTitle"]
+
+        //     let artistString = artist.string!
+        //     let songString = song.string!
+
+        //     print (artistString)
+        //     print (songString)
+
+
+        // NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
+
     //*****************************************************************
     // MARK: - Setup
     //*****************************************************************
@@ -181,17 +229,19 @@ class NowPlayingViewController: UIViewController {
         radioPlayer.contentURL = URL(string: currentStation.stationStreamURL)
         radioPlayer.prepareToPlay()
         radioPlayer.play()
+        startNowPlayingAnimation()
         
         updateLabels(statusMessage: "Loading Station...")
         
         // songLabel animate
         songLabel.animation = "flash"
-        songLabel.repeatCount = 3
+        songLabel.repeatCount = 2
         songLabel.animate()
         
         resetAlbumArtwork()
         
         track.isPlaying = true
+        NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
     }
     
     //*****************************************************************
@@ -350,7 +400,7 @@ class NowPlayingViewController: UIViewController {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                         
                     // Animate artwork
-                    self.albumImageView.animation = "wobble"
+                    self.albumImageView.animation = "fadeIn"
                     self.albumImageView.duration = 2
                     self.albumImageView.animate()
                     self.stationDescLabel.isHidden = true
@@ -475,7 +525,7 @@ class NowPlayingViewController: UIViewController {
     }
     
     @IBAction func shareButtonPressed(_ sender: UIButton) {
-        let songToShare = "I'm listening to \(track.title) on \(currentStation.stationName) via Swift Radio Pro"
+        let songToShare = "I'm listening to \(track.title) on \(currentStation.stationName)"
         let activityViewController = UIActivityViewController(activityItems: [songToShare, track.artworkImage!], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
     }
@@ -515,35 +565,41 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     // MARK: - MetaData Updated Notification
     //*****************************************************************
-    
+
     func metadataUpdated(n: NSNotification)
-    {
-        if(radioPlayer.timedMetadata != nil && radioPlayer.timedMetadata.count > 0)
-        {
-            startNowPlayingAnimation()
+    {   
+        print("metadata function running...")
+        let queryURL = "http://wxyc.info/playlists/recentEntries?v=2&n=15"
+        
+        let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        
+        // Query API
+        DataManager.getPlaylistDataWithSuccess(queryURL: escapedURL!) { (data) in
             
-            let firstMeta: MPTimedMetadata = radioPlayer.timedMetadata.first as! MPTimedMetadata
-            let metaData = firstMeta.value as! String
-            
-            var stringParts = [String]()
-            if metaData.range(of: " - ") != nil {
-                stringParts = metaData.components(separatedBy: " - ")
-            } else {
-                stringParts = metaData.components(separatedBy: "-")
+            if kDebugLog {
+                print("API SUCCESSFUL RETURN")
+                print("url: \(escapedURL!)")
             }
             
+            let json = JSON(data: data! as Data)
+
+            let artist = json["playcuts"][0]["artistName"].stringValue
+            let song = json["playcuts"][0]["songTitle"].stringValue
+            let id = json["playcuts"][0]["id"].stringValue
+
+            print (artist)
+            print (song)
+            print (id)
+
             // Set artist & songvariables
-            let currentSongName = track.title
-            track.artist = stringParts[0]
-            track.title = stringParts[0]
+            let currentSongName = self.track.title
+            self.track.artist = artist
+            self.track.title = song
+            self.track.id = id
             
-            if stringParts.count > 1 {
-                track.title = stringParts[1]
-            }
-            
-            if track.artist == "" && track.title == "" {
-                track.artist = currentStation.stationDesc
-                track.title = currentStation.stationName
+            if self.track.artist == "" && self.track.title == "" {
+                self.track.artist = self.currentStation.stationDesc
+                self.track.title = self.currentStation.stationName
             }
             
             DispatchQueue.main.async(execute: {
@@ -575,7 +631,7 @@ class NowPlayingViewController: UIViewController {
                     
                 }
             })
-        }
+        }                
     }
     
     //*****************************************************************

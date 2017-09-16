@@ -38,11 +38,11 @@ let searchable = true
 
 // Use LastFM or iTunes API
 // set to "false" to use iTunes
-let useLastFM = true
+let useLastFM = false
 
 // IF YOU USE LASTFM, PLEASE USE YOUR OWN KEY
 // Visit: http://www.last.fm/api
 
-let apiKey    = "9a267c245324cfa4f887366d497d3dd3"
-let apiSecret = "f1191864d7ae71e580b89238129768b8"
+let apiKey    = "45f85235ffc46cbb8769d545c8059399"
+let apiSecret = "f57464fb062d51b6581bf6dc8321f40a"
 
