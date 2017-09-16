@@ -66,10 +66,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2C5545BA1C1124DE00728469 /* SwiftRadioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftRadioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C5545BA1C1124DE00728469 /* WXYCUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WXYCUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C5545BC1C1124DE00728469 /* SwiftRadioUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftRadioUITests.swift; sourceTree = "<group>"; };
 		2C5545BE1C1124DE00728469 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9409E1161ABF6FEA00312E2B /* SwiftRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9409E1161ABF6FEA00312E2B /* WXYC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WXYC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9409E11A1ABF6FEA00312E2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9409E1231ABF6FEA00312E2B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -161,8 +161,8 @@
 		9409E1171ABF6FEA00312E2B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9409E1161ABF6FEA00312E2B /* SwiftRadio.app */,
-				2C5545BA1C1124DE00728469 /* SwiftRadioUITests.xctest */,
+				9409E1161ABF6FEA00312E2B /* WXYC.app */,
+				2C5545BA1C1124DE00728469 /* WXYCUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -297,9 +297,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2C5545B91C1124DE00728469 /* SwiftRadioUITests */ = {
+		2C5545B91C1124DE00728469 /* WXYCUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "SwiftRadioUITests" */;
+			buildConfigurationList = 2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "WXYCUITests" */;
 			buildPhases = (
 				2C5545B61C1124DE00728469 /* Sources */,
 				2C5545B71C1124DE00728469 /* Frameworks */,
@@ -310,14 +310,14 @@
 			dependencies = (
 				2C5545C01C1124DE00728469 /* PBXTargetDependency */,
 			);
-			name = SwiftRadioUITests;
+			name = WXYCUITests;
 			productName = SwiftRadioUITests;
-			productReference = 2C5545BA1C1124DE00728469 /* SwiftRadioUITests.xctest */;
+			productReference = 2C5545BA1C1124DE00728469 /* WXYCUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		9409E1151ABF6FEA00312E2B /* SwiftRadio */ = {
+		9409E1151ABF6FEA00312E2B /* WXYC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9409E1381ABF6FEA00312E2B /* Build configuration list for PBXNativeTarget "SwiftRadio" */;
+			buildConfigurationList = 9409E1381ABF6FEA00312E2B /* Build configuration list for PBXNativeTarget "WXYC" */;
 			buildPhases = (
 				9409E1121ABF6FEA00312E2B /* Sources */,
 				9409E1131ABF6FEA00312E2B /* Frameworks */,
@@ -327,9 +327,9 @@
 			);
 			dependencies = (
 			);
-			name = SwiftRadio;
+			name = WXYC;
 			productName = RadioPro;
-			productReference = 9409E1161ABF6FEA00312E2B /* SwiftRadio.app */;
+			productReference = 9409E1161ABF6FEA00312E2B /* WXYC.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -341,7 +341,7 @@
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0800;
-				ORGANIZATIONNAME = matthewfecher.com;
+				ORGANIZATIONNAME = wxyc.org;
 				TargetAttributes = {
 					2C5545B91C1124DE00728469 = {
 						CreatedOnToolsVersion = 7.1;
@@ -360,7 +360,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9409E1111ABF6FE900312E2B /* Build configuration list for PBXProject "SwiftRadio" */;
+			buildConfigurationList = 9409E1111ABF6FE900312E2B /* Build configuration list for PBXProject "WXYC" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -373,8 +373,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9409E1151ABF6FEA00312E2B /* SwiftRadio */,
-				2C5545B91C1124DE00728469 /* SwiftRadioUITests */,
+				9409E1151ABF6FEA00312E2B /* WXYC */,
+				2C5545B91C1124DE00728469 /* WXYCUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -462,7 +462,7 @@
 /* Begin PBXTargetDependency section */
 		2C5545C01C1124DE00728469 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9409E1151ABF6FEA00312E2B /* SwiftRadio */;
+			target = 9409E1151ABF6FEA00312E2B /* WXYC */;
 			targetProxy = 2C5545BF1C1124DE00728469 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -549,7 +549,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -588,7 +588,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -612,7 +612,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.wxyc.iphoneapp;
-				PRODUCT_NAME = SwiftRadio;
+				PRODUCT_NAME = WXYC;
 				PROVISIONING_PROFILE = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 3.0;
@@ -635,7 +635,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.wxyc.iphoneapp;
-				PRODUCT_NAME = SwiftRadio;
+				PRODUCT_NAME = WXYC;
 				PROVISIONING_PROFILE = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 3.0;
@@ -645,7 +645,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "SwiftRadioUITests" */ = {
+		2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "WXYCUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C5545C11C1124DE00728469 /* Debug */,
@@ -654,7 +654,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9409E1111ABF6FE900312E2B /* Build configuration list for PBXProject "SwiftRadio" */ = {
+		9409E1111ABF6FE900312E2B /* Build configuration list for PBXProject "WXYC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9409E1361ABF6FEA00312E2B /* Debug */,
@@ -663,7 +663,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9409E1381ABF6FEA00312E2B /* Build configuration list for PBXNativeTarget "SwiftRadio" */ = {
+		9409E1381ABF6FEA00312E2B /* Build configuration list for PBXNativeTarget "WXYC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9409E1391ABF6FEA00312E2B /* Debug */,
