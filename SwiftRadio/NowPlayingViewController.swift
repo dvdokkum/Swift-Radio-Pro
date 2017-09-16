@@ -177,20 +177,6 @@ class NowPlayingViewController: UIViewController {
             } 
         }
     }
-            
-        //     let json = JSON(data: data! as Data)
-
-        //     let artist = json["playcuts"][0]["artistName"]
-        //     let song = json["playcuts"][0]["songTitle"]
-
-        //     let artistString = artist.string!
-        //     let songString = song.string!
-
-        //     print (artistString)
-        //     print (songString)
-
-
-        // NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
 
     //*****************************************************************
     // MARK: - Setup
@@ -374,7 +360,10 @@ class NowPlayingViewController: UIViewController {
         track.artworkLoaded = false
         track.artworkURL = currentStation.stationImageURL
         updateAlbumArtwork()
-        stationDescLabel.isHidden = false
+        DispatchQueue.main.async(execute: {
+            //self.albumImageView.image = nil
+            self.stationDescLabel.isHidden = false
+        })
     }
     
     func updateAlbumArtwork() {
@@ -430,12 +419,16 @@ class NowPlayingViewController: UIViewController {
             
         } else {
             // No Station or API art found, use default art
-            self.albumImageView.image = UIImage(named: "albumArt")
-            track.artworkImage = albumImageView.image
+            DispatchQueue.main.async(execute: {
+                self.albumImageView.image = UIImage(named: "albumArt")
+                self.track.artworkImage = self.albumImageView.image
+            })
         }
         
         // Force app to update display
-        self.view.setNeedsDisplay()
+        DispatchQueue.main.async(execute: {
+            self.view.setNeedsDisplay()
+        })
     }
 
     // Call LastFM or iTunes API to get album art url
@@ -496,7 +489,7 @@ class NowPlayingViewController: UIViewController {
                     if kDebugLog { print("lastFM artURL: \(artURL)") }
                     
                     // Check for Default Last FM Image
-                    if artURL.range(of: "/noimage/") != nil {
+                    if artURL.range(of: "/noimage/") != nil || artURL == "" {
                         self.getItunesArt()
                         
                     } else {
@@ -640,8 +633,8 @@ class NowPlayingViewController: UIViewController {
                     //self.delegate?.songMetaDataDidUpdate(track: self.track)
                     
                     // Query API for album art
-                    self.resetAlbumArtwork()
                     self.queryAlbumArt()
+                    self.resetAlbumArtwork()
                     self.updateLockScreen()
                     
                 }
