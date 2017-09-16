@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9409E1151ABF6FEA00312E2B"
-               BuildableName = "SwiftRadio.app"
+               BuildableName = "WXYC.app"
                BlueprintName = "WXYC"
                ReferencedContainer = "container:WXYC.xcodeproj">
             </BuildableReference>
@@ -44,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9409E1151ABF6FEA00312E2B"
-            BuildableName = "SwiftRadio.app"
+            BuildableName = "WXYC.app"
             BlueprintName = "WXYC"
             ReferencedContainer = "container:WXYC.xcodeproj">
          </BuildableReference>
@@ -68,7 +68,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9409E1151ABF6FEA00312E2B"
-            BuildableName = "SwiftRadio.app"
+            BuildableName = "WXYC.app"
             BlueprintName = "WXYC"
             ReferencedContainer = "container:WXYC.xcodeproj">
          </BuildableReference>
@@ -87,7 +87,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9409E1151ABF6FEA00312E2B"
-            BuildableName = "SwiftRadio.app"
+            BuildableName = "WXYC.app"
             BlueprintName = "WXYC"
             ReferencedContainer = "container:WXYC.xcodeproj">
          </BuildableReference>
