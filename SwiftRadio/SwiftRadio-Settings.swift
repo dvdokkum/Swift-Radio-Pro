@@ -38,7 +38,7 @@ let searchable = true
 
 // Use LastFM or iTunes API
 // set to "false" to use iTunes
-let useLastFM = false
+let useLastFM = true
 
 // IF YOU USE LASTFM, PLEASE USE YOUR OWN KEY
 // Visit: http://www.last.fm/api

@@ -447,7 +447,7 @@ class NowPlayingViewController: UIViewController {
         // Construct either LastFM or iTunes API call URL
         let queryURL: String
         if useLastFM {
-            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=%@&artist=%@&track=%@&format=json", apiKey, track.artist, track.title)
+            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=%@&artist=%@&album=%@&format=json", apiKey, track.artist, track.album)
         } else {
             queryURL = String(format: "https://itunes.apple.com/search?term=%@+%@&entity=song", track.artist, track.title)
         }
@@ -466,7 +466,7 @@ class NowPlayingViewController: UIViewController {
             
             if useLastFM {
                 // Get Largest Sized LastFM Image
-                if let imageArray = json["track"]["album"]["image"].array {
+                if let imageArray = json["album"]["image"].array {
                     
                     let arrayCount = imageArray.count
                     let lastImage = imageArray[arrayCount - 1]
@@ -586,16 +586,19 @@ class NowPlayingViewController: UIViewController {
             let artist = json["playcuts"][0]["artistName"].stringValue
             let song = json["playcuts"][0]["songTitle"].stringValue
             let id = json["playcuts"][0]["id"].stringValue
+            let album = json["playcuts"][0]["releaseTitle"].stringValue
 
             print (artist)
             print (song)
             print (id)
+            print (album)
 
             // Set artist & songvariables
             let currentSongName = self.track.title
             self.track.artist = artist
             self.track.title = song
             self.track.id = id
+            self.track.album = album
             
             if self.track.artist == "" && self.track.title == "" {
                 self.track.artist = self.currentStation.stationDesc
