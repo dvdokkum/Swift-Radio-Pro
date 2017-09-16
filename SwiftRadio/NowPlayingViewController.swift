@@ -70,8 +70,8 @@ class NowPlayingViewController: UIViewController {
         currentStation = RadioStation(
             name: "WXYC - Chapel Hill",
                 streamURL: "http://audio-mp3.ibiblio.org:8000/wxyc.mp3",
-                imageURL: "https://backalleybikes.files.wordpress.com/2012/01/wxyc1.jpg",
-                desc: "Chapel Hill's finest",
+                imageURL: "",
+                desc: "",
                 longDesc: "WXYC 89.3 FM is the non-commercial student-run radio station of the University of North Carolina at Chapel Hill. We broadcast at 1100 watts from the student union on the UNC campus, 24 hours a day, 365 days a year. Our coverage area encompasses approximately 900 square miles in and around Chapel Hill, Durham, Pittsboro, Apex, and parts of Raleigh."
         )
         
@@ -440,21 +440,11 @@ class NowPlayingViewController: UIViewController {
 
     // Call LastFM or iTunes API to get album art url
     
-    func queryAlbumArt() {
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        // Construct either LastFM or iTunes API call URL
+    func getItunesArt() {
         let queryURL: String
-        if useLastFM {
-            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=%@&artist=%@&album=%@&format=json", apiKey, track.artist, track.album)
-        } else {
-            queryURL = String(format: "https://itunes.apple.com/search?term=%@+%@&entity=song", track.artist, track.title)
-        }
-        
+        queryURL = String(format: "https://itunes.apple.com/search?term=%@+%@&entity=song", track.artist, track.title)
         let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        
-        // Query API
+
         DataManager.getTrackDataWithSuccess(queryURL: escapedURL!) { (data) in
             
             if kDebugLog {
@@ -463,48 +453,70 @@ class NowPlayingViewController: UIViewController {
             }
             
             let json = JSON(data: data! as Data)
+
+            if let artURL = json["results"][0]["artworkUrl100"].string {
             
-            if useLastFM {
-                // Get Largest Sized LastFM Image
-                if let imageArray = json["album"]["image"].array {
-                    
-                    let arrayCount = imageArray.count
-                    let lastImage = imageArray[arrayCount - 1]
-                    
-                    if let artURL = lastImage["#text"].string {
-                        
-                        // Check for Default Last FM Image
-                        if artURL.range(of: "/noimage/") != nil {
-                            self.resetAlbumArtwork()
-                            
-                        } else {
-                            // LastFM image found!
-                            self.track.artworkURL = artURL
-                            self.track.artworkLoaded = true
-                            self.updateAlbumArtwork()
-                        }
-                        
-                    } else {
-                        self.resetAlbumArtwork()
-                    }
-                } else {
-                    self.resetAlbumArtwork()
-                }
+                if kDebugLog { print("iTunes artURL: \(artURL)") }
             
+                self.track.artworkURL = artURL
+                self.track.artworkLoaded = true
+                self.updateAlbumArtwork()
             } else {
-                // Use iTunes API. Images are 100px by 100px
-                if let artURL = json["results"][0]["artworkUrl100"].string {
-                    
-                    if kDebugLog { print("iTunes artURL: \(artURL)") }
-                    
-                    self.track.artworkURL = artURL
-                    self.track.artworkLoaded = true
-                    self.updateAlbumArtwork()
-                } else {
-                    self.resetAlbumArtwork()
+                self.resetAlbumArtwork()
                 }
+        }
+    }
+
+    func queryAlbumArt() {
+        
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                
+        if useLastFM {
+            let queryURL: String
+            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=%@&artist=%@&album=%@&format=json", apiKey, track.artist, track.album)
+            let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+
+            DataManager.getTrackDataWithSuccess(queryURL: escapedURL!) { (data) in
+            
+            if kDebugLog {
+                print("API SUCCESSFUL RETURN")
+                print("url: \(escapedURL!)")
             }
             
+            let json = JSON(data: data! as Data)
+
+            // Get Largest Sized LastFM Image
+            if let imageArray = json["album"]["image"].array {
+                
+                let arrayCount = imageArray.count
+                let lastImage = imageArray[arrayCount - 1]
+                
+                if let artURL = lastImage["#text"].string {
+
+                    if kDebugLog { print("lastFM artURL: \(artURL)") }
+                    
+                    // Check for Default Last FM Image
+                    if artURL.range(of: "/noimage/") != nil {
+                        self.getItunesArt()
+                        
+                    } else {
+                        // LastFM image found!
+                        self.track.artworkURL = artURL
+                        self.track.artworkLoaded = true
+                        self.updateAlbumArtwork()
+                    }
+                    
+                } else {
+                    self.getItunesArt()
+                }
+            } else {
+                self.getItunesArt()
+            }
+        }
+
+
+        } else {
+            getItunesArt()
         }
     }
     
@@ -610,7 +622,7 @@ class NowPlayingViewController: UIViewController {
                 if currentSongName != self.track.title {
                     
                     if kDebugLog {
-                        print("METADATA artist: \(self.track.artist) | title: \(self.track.title)")
+                        print("METADATA artist: \(self.track.artist) | title: \(self.track.title) | album: \(self.track.album)")
                     }
                     
                     // Update Labels
