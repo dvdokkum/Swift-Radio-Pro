@@ -202,7 +202,7 @@ public func timeAgoSinceDate(date: Date, numericDates: Bool) -> String {
             return "1w"
         }
     } else if (day >= 2) {
-        return "\(components.day)d"
+        return "\(String(describing: components.day))d"
     } else if (day >= 1){
         if (numericDates){
             return "1d"
