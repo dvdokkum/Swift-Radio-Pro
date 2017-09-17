@@ -48,7 +48,7 @@ public func htmlToAttributedString(text: String) -> NSAttributedString! {
 }
 
 public func degreesToRadians(degrees: CGFloat) -> CGFloat {
-    return degrees * CGFloat(M_PI / 180)
+    return degrees * CGFloat.pi / 180
 }
 
 public func delay(delay:Double, closure: @escaping ()->()) {
@@ -71,7 +71,7 @@ public extension UIColor {
         
         if hex.hasPrefix("#") {
             let index = hex.index(hex.startIndex, offsetBy: 1)
-            hex         = hex.substring(from: index)
+            hex        = String(hex[index...])
         }
         
         let scanner = Scanner(string: hex)
@@ -207,7 +207,7 @@ public func timeAgoSinceDate(date: Date, numericDates: Bool) -> String {
             return "1w"
         }
     } else if (day >= 2) {
-        return "\(components.day)d"
+        return "\(String(describing: components.day))d"
     } else if (day >= 1){
         if (numericDates){
             return "1d"
