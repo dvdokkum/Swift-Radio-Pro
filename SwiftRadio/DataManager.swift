@@ -14,22 +14,22 @@ class DataManager {
     // Helper class to get either local or remote JSON
     //*****************************************************************
     
-    class func getStationDataWithSuccess(success: @escaping ((_ metaData: Data?) -> Void)) {
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            if useLocalStations {
-                getDataFromFileWithSuccess() { data in
-                    success(data)
-                }
-            } else {
-                loadDataFromURL(url: URL(string: stationDataURL)!) { data, error in
-                    if let urlData = data {
-                        success(urlData)
-                    }
-                }
-            }
-        }
-    }
+//    class func getStationDataWithSuccess(success: @escaping ((_ metaData: Data?) -> Void)) {
+//
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            if useLocalStations {
+//                getDataFromFileWithSuccess() { data in
+//                    success(data)
+//                }
+//            } else {
+//                loadDataFromURL(url: URL(string: stationDataURL)!) { data, error in
+//                    if let urlData = data {
+//                        success(urlData)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     //*****************************************************************
     // Load local JSON Data
@@ -65,6 +65,22 @@ class DataManager {
             }
         }
     }
+
+    //*****************************************************************
+    // Get Playlist Data
+    //*****************************************************************
+    
+    class func getPlaylistDataWithSuccess(queryURL: String, success: @escaping ((_ metaData: Data?) -> Void)) {
+
+        loadDataFromURL(url: URL(string: queryURL)!) { data, _ in
+            // Return Data
+            if let urlData = data {
+                success(urlData)
+            } else {
+                if kDebugLog { print("API TIMEOUT OR ERROR") }
+            }
+        }
+    }
     
     //*****************************************************************
     // REUSABLE DATA/API CALL METHOD
@@ -85,7 +101,7 @@ class DataManager {
             if let responseError = error {
                 completion(nil, responseError)
                 
-                if kDebugLog { print("API ERROR: \(error)") }
+                if kDebugLog { print("API ERROR: \(String(describing: error))") }
                 
                 // Stop activity Indicator
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false

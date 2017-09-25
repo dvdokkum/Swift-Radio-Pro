@@ -9,16 +9,21 @@
 import UIKit
 import MediaPlayer
 
+//create custom notification
+extension Notification.Name {
+static let onPlaylistUpdate = Notification.Name("on-playlist-update")
+}
+
 //*****************************************************************
 // Protocol
 // Updates the StationsViewController when the track changes
 //*****************************************************************
 
-protocol NowPlayingViewControllerDelegate: class {
-    func songMetaDataDidUpdate(track: Track)
-    func artworkDidUpdate(track: Track)
-    func trackPlayingToggled(track: Track)
-}
+//protocol NowPlayingViewControllerDelegate: class {
+//    func songMetaDataDidUpdate(track: Track)
+//    func artworkDidUpdate(track: Track)
+//    func trackPlayingToggled(track: Track)
+//}
 
 //*****************************************************************
 // NowPlayingViewController
@@ -45,8 +50,10 @@ class NowPlayingViewController: UIViewController {
     let radioPlayer = Player.radio
     var track: Track!
     var mpVolumeSlider = UISlider()
+
+
     
-    weak var delegate: NowPlayingViewControllerDelegate?
+    //weak var delegate: NowPlayingViewControllerDelegate?
     
     //*****************************************************************
     // MARK: - ViewDidLoad
@@ -57,6 +64,16 @@ class NowPlayingViewController: UIViewController {
         
         // Setup handoff functionality - GH
         setupUserActivity()
+        
+        // Setup Radio Statio
+        // Add your radio station information here:
+        currentStation = RadioStation(
+            name: "WXYC - Chapel Hill",
+                streamURL: "http://audio-mp3.ibiblio.org:8000/wxyc.mp3",
+                imageURL: "",
+                desc: "",
+                longDesc: "WXYC 89.3 FM is the non-commercial student-run radio station of the University of North Carolina at Chapel Hill. We broadcast at 1100 watts from the student union on the UNC campus, 24 hours a day, 365 days a year. Our coverage area encompasses approximately 900 square miles in and around Chapel Hill, Durham, Pittsboro, Apex, and parts of Raleigh."
+        )
         
         // Set AlbumArtwork Constraints
         optimizeForDeviceSize()
@@ -85,7 +102,7 @@ class NowPlayingViewController: UIViewController {
         // Notification for MediaPlayer metadata updated
         NotificationCenter.default.addObserver(self,
             selector: #selector(NowPlayingViewController.metadataUpdated),
-            name: Notification.Name.MPMoviePlayerTimedMetadataUpdated,
+            name: Notification.Name.onPlaylistUpdate,
             object: nil)
         
         // Notification for AVAudioSession Interruption (e.g. Phone call)
@@ -112,6 +129,8 @@ class NowPlayingViewController: UIViewController {
         // Setup slider
         setupVolumeSlider()
         
+        var timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(self.checkPlaylist), userInfo: nil, repeats: true)
+        
     }
     
     func didBecomeActiveNotificationReceived() {
@@ -127,13 +146,38 @@ class NowPlayingViewController: UIViewController {
             name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
             object: nil)
         NotificationCenter.default.removeObserver(self,
-            name: Notification.Name.MPMoviePlayerTimedMetadataUpdated,
+            name: Notification.Name.onPlaylistUpdate,
             object: nil)
         NotificationCenter.default.removeObserver(self,
             name: Notification.Name.AVAudioSessionInterruption,
             object: AVAudioSession.sharedInstance())
     }
     
+
+    @objc func checkPlaylist() {
+
+        if track.isPlaying == true {
+            let queryURL = "http://wxyc.info/playlists/recentEntries?v=2&n=15"
+            let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            // Query API
+            DataManager.getPlaylistDataWithSuccess(queryURL: escapedURL!) { (data) in
+                
+                if kDebugLog {
+                    print("API SUCCESSFUL RETURN")
+                    print("url: \(escapedURL!)")
+                }
+
+            let json = JSON(data: data! as Data)
+            let id = json["playcuts"][0]["id"].stringValue
+
+            if id != self.track.id {
+               NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
+            }
+
+            } 
+        }
+    }
+
     //*****************************************************************
     // MARK: - Setup
     //*****************************************************************
@@ -171,17 +215,19 @@ class NowPlayingViewController: UIViewController {
         radioPlayer.contentURL = URL(string: currentStation.stationStreamURL)
         radioPlayer.prepareToPlay()
         radioPlayer.play()
+        startNowPlayingAnimation()
         
         updateLabels(statusMessage: "Loading Station...")
         
         // songLabel animate
         songLabel.animation = "flash"
-        songLabel.repeatCount = 3
+        songLabel.repeatCount = 2
         songLabel.animate()
         
         resetAlbumArtwork()
         
         track.isPlaying = true
+        NotificationCenter.default.post(name: .onPlaylistUpdate, object: nil)
     }
     
     //*****************************************************************
@@ -202,7 +248,7 @@ class NowPlayingViewController: UIViewController {
         nowPlayingImageView.startAnimating()
         
         // Update StationsVC
-        self.delegate?.trackPlayingToggled(track: self.track)
+        //self.delegate?.trackPlayingToggled(track: self.track)
     }
     
     @IBAction func pausePressed() {
@@ -215,7 +261,7 @@ class NowPlayingViewController: UIViewController {
         nowPlayingImageView.stopAnimating()
         
         // Update StationsVC
-        self.delegate?.trackPlayingToggled(track: self.track)
+        //self.delegate?.trackPlayingToggled(track: self.track)
     }
     
     @IBAction func volumeChanged(_ sender:UISlider) {
@@ -314,7 +360,10 @@ class NowPlayingViewController: UIViewController {
         track.artworkLoaded = false
         track.artworkURL = currentStation.stationImageURL
         updateAlbumArtwork()
-        stationDescLabel.isHidden = false
+        DispatchQueue.main.async(execute: {
+            //self.albumImageView.image = nil
+            self.stationDescLabel.isHidden = false
+        })
     }
     
     func updateAlbumArtwork() {
@@ -340,7 +389,7 @@ class NowPlayingViewController: UIViewController {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                         
                     // Animate artwork
-                    self.albumImageView.animation = "wobble"
+                    self.albumImageView.animation = "fadeIn"
                     self.albumImageView.duration = 2
                     self.albumImageView.animate()
                     self.stationDescLabel.isHidden = true
@@ -349,7 +398,7 @@ class NowPlayingViewController: UIViewController {
                     self.updateLockScreen()
                     
                     // Call delegate function that artwork updated
-                    self.delegate?.artworkDidUpdate(track: self.track)
+                    //self.delegate?.artworkDidUpdate(track: self.track)
                 }
             }
             
@@ -366,35 +415,29 @@ class NowPlayingViewController: UIViewController {
             track.artworkLoaded = true
             
             // Call delegate function that artwork updated
-            self.delegate?.artworkDidUpdate(track: self.track)
+            //self.delegate?.artworkDidUpdate(track: self.track)
             
         } else {
             // No Station or API art found, use default art
-            self.albumImageView.image = UIImage(named: "albumArt")
-            track.artworkImage = albumImageView.image
+            DispatchQueue.main.async(execute: {
+                self.albumImageView.image = UIImage(named: "albumArt")
+                self.track.artworkImage = self.albumImageView.image
+            })
         }
         
         // Force app to update display
-        self.view.setNeedsDisplay()
+        DispatchQueue.main.async(execute: {
+            self.view.setNeedsDisplay()
+        })
     }
 
     // Call LastFM or iTunes API to get album art url
     
-    func queryAlbumArt() {
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        // Construct either LastFM or iTunes API call URL
+    func getItunesArt() {
         let queryURL: String
-        if useLastFM {
-            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=%@&artist=%@&track=%@&format=json", apiKey, track.artist, track.title)
-        } else {
-            queryURL = String(format: "https://itunes.apple.com/search?term=%@+%@&entity=song", track.artist, track.title)
-        }
-        
+        queryURL = String(format: "https://itunes.apple.com/search?term=%@+%@&entity=song", track.artist, track.title)
         let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        
-        // Query API
+
         DataManager.getTrackDataWithSuccess(queryURL: escapedURL!) { (data) in
             
             if kDebugLog {
@@ -403,48 +446,70 @@ class NowPlayingViewController: UIViewController {
             }
             
             let json = JSON(data: data! as Data)
+
+            if let artURL = json["results"][0]["artworkUrl100"].string {
             
-            if useLastFM {
-                // Get Largest Sized LastFM Image
-                if let imageArray = json["track"]["album"]["image"].array {
-                    
-                    let arrayCount = imageArray.count
-                    let lastImage = imageArray[arrayCount - 1]
-                    
-                    if let artURL = lastImage["#text"].string {
-                        
-                        // Check for Default Last FM Image
-                        if artURL.range(of: "/noimage/") != nil {
-                            self.resetAlbumArtwork()
-                            
-                        } else {
-                            // LastFM image found!
-                            self.track.artworkURL = artURL
-                            self.track.artworkLoaded = true
-                            self.updateAlbumArtwork()
-                        }
-                        
-                    } else {
-                        self.resetAlbumArtwork()
-                    }
-                } else {
-                    self.resetAlbumArtwork()
-                }
+                if kDebugLog { print("iTunes artURL: \(artURL)") }
             
+                self.track.artworkURL = artURL
+                self.track.artworkLoaded = true
+                self.updateAlbumArtwork()
             } else {
-                // Use iTunes API. Images are 100px by 100px
-                if let artURL = json["results"][0]["artworkUrl100"].string {
-                    
-                    if kDebugLog { print("iTunes artURL: \(artURL)") }
-                    
-                    self.track.artworkURL = artURL
-                    self.track.artworkLoaded = true
-                    self.updateAlbumArtwork()
-                } else {
-                    self.resetAlbumArtwork()
+                self.resetAlbumArtwork()
                 }
+        }
+    }
+
+    func queryAlbumArt() {
+        
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                
+        if useLastFM {
+            let queryURL: String
+            queryURL = String(format: "http://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=%@&artist=%@&album=%@&format=json", apiKey, track.artist, track.album)
+            let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+
+            DataManager.getTrackDataWithSuccess(queryURL: escapedURL!) { (data) in
+            
+            if kDebugLog {
+                print("API SUCCESSFUL RETURN")
+                print("url: \(escapedURL!)")
             }
             
+            let json = JSON(data: data! as Data)
+
+            // Get Largest Sized LastFM Image
+            if let imageArray = json["album"]["image"].array {
+                
+                let arrayCount = imageArray.count
+                let lastImage = imageArray[arrayCount - 1]
+                
+                if let artURL = lastImage["#text"].string {
+
+                    if kDebugLog { print("lastFM artURL: \(artURL)") }
+                    
+                    // Check for Default Last FM Image
+                    if artURL.range(of: "/noimage/") != nil || artURL == "" {
+                        self.getItunesArt()
+                        
+                    } else {
+                        // LastFM image found!
+                        self.track.artworkURL = artURL
+                        self.track.artworkLoaded = true
+                        self.updateAlbumArtwork()
+                    }
+                    
+                } else {
+                    self.getItunesArt()
+                }
+            } else {
+                self.getItunesArt()
+            }
+        }
+
+
+        } else {
+            getItunesArt()
         }
     }
     
@@ -465,7 +530,7 @@ class NowPlayingViewController: UIViewController {
     }
     
     @IBAction func shareButtonPressed(_ sender: UIButton) {
-        let songToShare = "I'm listening to \(track.title) on \(currentStation.stationName) via Swift Radio Pro"
+        let songToShare = "I'm listening to \(track.title) on \(currentStation.stationName)"
         let activityViewController = UIActivityViewController(activityItems: [songToShare, track.artworkImage!], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
     }
@@ -505,35 +570,44 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     // MARK: - MetaData Updated Notification
     //*****************************************************************
-    
+
     func metadataUpdated(n: NSNotification)
-    {
-        if(radioPlayer.timedMetadata != nil && radioPlayer.timedMetadata.count > 0)
-        {
-            startNowPlayingAnimation()
+    {   
+        print("metadata function running...")
+        let queryURL = "http://wxyc.info/playlists/recentEntries?v=2&n=15"
+        
+        let escapedURL = queryURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        
+        // Query API
+        DataManager.getPlaylistDataWithSuccess(queryURL: escapedURL!) { (data) in
             
-            let firstMeta: MPTimedMetadata = radioPlayer.timedMetadata.first as! MPTimedMetadata
-            let metaData = firstMeta.value as! String
-            
-            var stringParts = [String]()
-            if metaData.range(of: " - ") != nil {
-                stringParts = metaData.components(separatedBy: " - ")
-            } else {
-                stringParts = metaData.components(separatedBy: "-")
+            if kDebugLog {
+                print("API SUCCESSFUL RETURN")
+                print("url: \(escapedURL!)")
             }
             
+            let json = JSON(data: data! as Data)
+
+            let artist = json["playcuts"][0]["artistName"].stringValue
+            let song = json["playcuts"][0]["songTitle"].stringValue
+            let id = json["playcuts"][0]["id"].stringValue
+            let album = json["playcuts"][0]["releaseTitle"].stringValue
+
+            print (artist)
+            print (song)
+            print (id)
+            print (album)
+
             // Set artist & songvariables
-            let currentSongName = track.title
-            track.artist = stringParts[0]
-            track.title = stringParts[0]
+            let currentSongName = self.track.title
+            self.track.artist = artist
+            self.track.title = song
+            self.track.id = id
+            self.track.album = album
             
-            if stringParts.count > 1 {
-                track.title = stringParts[1]
-            }
-            
-            if track.artist == "" && track.title == "" {
-                track.artist = currentStation.stationDesc
-                track.title = currentStation.stationName
+            if self.track.artist == "" && self.track.title == "" {
+                self.track.artist = self.currentStation.stationDesc
+                self.track.title = self.currentStation.stationName
             }
             
             DispatchQueue.main.async(execute: {
@@ -541,7 +615,7 @@ class NowPlayingViewController: UIViewController {
                 if currentSongName != self.track.title {
                     
                     if kDebugLog {
-                        print("METADATA artist: \(self.track.artist) | title: \(self.track.title)")
+                        print("METADATA artist: \(self.track.artist) | title: \(self.track.title) | album: \(self.track.album)")
                     }
                     
                     // Update Labels
@@ -556,16 +630,16 @@ class NowPlayingViewController: UIViewController {
                     self.songLabel.animate()
                     
                     // Update Stations Screen
-                    self.delegate?.songMetaDataDidUpdate(track: self.track)
+                    //self.delegate?.songMetaDataDidUpdate(track: self.track)
                     
                     // Query API for album art
-                    self.resetAlbumArtwork()
                     self.queryAlbumArt()
+                    self.resetAlbumArtwork()
                     self.updateLockScreen()
                     
                 }
             })
-        }
+        }                
     }
     
     //*****************************************************************
