@@ -8,6 +8,7 @@
 
 import UIKit
 import MediaPlayer
+import AVFoundation
 
 //create custom notification
 extension Notification.Name {
@@ -50,7 +51,7 @@ class NowPlayingViewController: UIViewController {
     let radioPlayer = Player.radio
     var track: Track!
     var mpVolumeSlider = UISlider()
-
+    var player = AVPlayer()
 
     
     //weak var delegate: NowPlayingViewControllerDelegate?
@@ -183,13 +184,17 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     func setupPlayer() {
-        radioPlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-        radioPlayer.view.sizeToFit()
-        radioPlayer.movieSourceType = MPMovieSourceType.streaming
-        radioPlayer.isFullscreen = false
-        radioPlayer.shouldAutoplay = true
-        radioPlayer.prepareToPlay()
-        radioPlayer.controlStyle = MPMovieControlStyle.none
+        let playerItem = AVPlayerItem(url: URL(string: currentStation.stationStreamURL)!)
+        player = AVPlayer(playerItem: playerItem)
+        player.rate = 1.0;
+        
+//        radioPlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+//        radioPlayer.view.sizeToFit()
+//        radioPlayer.movieSourceType = MPMovieSourceType.streaming
+//        radioPlayer.isFullscreen = false
+//        radioPlayer.shouldAutoplay = true
+//        radioPlayer.prepareToPlay()
+//        radioPlayer.controlStyle = MPMovieControlStyle.none
     }
   
     func setupVolumeSlider() {
@@ -210,11 +215,13 @@ class NowPlayingViewController: UIViewController {
     }
     
     func stationDidChange() {
-        radioPlayer.stop()
+//        radioPlayer.stop()
+//
+//        radioPlayer.contentURL = URL(string: currentStation.stationStreamURL)
+//        radioPlayer.prepareToPlay()
+//        radioPlayer.play()
+        player.play()
         
-        radioPlayer.contentURL = URL(string: currentStation.stationStreamURL)
-        radioPlayer.prepareToPlay()
-        radioPlayer.play()
         startNowPlayingAnimation()
         
         updateLabels(statusMessage: "Loading Station...")
@@ -237,7 +244,8 @@ class NowPlayingViewController: UIViewController {
     @IBAction func playPressed() {
         track.isPlaying = true
         playButtonEnable(enabled: false)
-        radioPlayer.play()
+        //radioPlayer.play()
+        player.play()
         updateLabels()
         
         // songLabel Animation
@@ -256,7 +264,8 @@ class NowPlayingViewController: UIViewController {
         
         playButtonEnable()
         
-        radioPlayer.pause()
+        //radioPlayer.pause()
+        player.pause()
         updateLabels(statusMessage: "Station Paused...")
         nowPlayingImageView.stopAnimating()
         
