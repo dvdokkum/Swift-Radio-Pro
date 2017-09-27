@@ -2,18 +2,18 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "stationImage.png"
+      "filename" : "wxyc1-2.jpg",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "stationImage@2x.png"
+      "filename" : "wxyc1.jpg",
+      "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x",
-      "filename" : "stationImage@3x.png"
+      "filename" : "wxyc1-1.jpg",
+      "scale" : "3x"
     }
   ],
   "info" : {

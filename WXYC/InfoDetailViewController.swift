@@ -43,8 +43,8 @@ class InfoDetailViewController: UIViewController {
     func setupStationText() {
         
         // Display Station Name & Short Desc
-        stationNameLabel.text = currentStation.stationName
-        stationDescLabel.text = currentStation.stationDesc
+        //stationNameLabel.text = currentStation.stationName
+        //stationDescLabel.text = currentStation.stationDesc
         
         // Display Station Long Desc
         if currentStation.stationLongDesc == "" {
