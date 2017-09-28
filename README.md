@@ -1,6 +1,6 @@
 # 64-bit iOS app
 
-##History
+## History
 
 So.... back in the heady days of 2010, [Jake B.](https://github.com/jakebromberg) made the very first open-source [WXYC iPhone app](https://github.com/jakebromberg/wxyc-iphone-app). At the time this was kind of a big deal as there weren't too many radio stations (let alone college stations) that had an app available for the iPhone. Fast-forward a couple years and that old app is still [choogling](https://www.youtube.com/watch?v=mUzl7_OpVLA) along (with a couple updates here and there over the years). 
 
@@ -13,14 +13,14 @@ This is the new repo. The new generation. Next gen. Gen X. Or. Like. Gen Z-ish. 
 
 **"We think you're really going to like it..."**
 
-##How Does It Work
+## How Does It Work
 
 Run it in Xcode dummy.
 
-##Need help?
+## Need help?
 
 Send an email to [dvd@wxyc.org](dvd@wxyc.org). Tell him BB sent you.
 
-##Credits
+## Credits
 
 This is mostly a big fork off [Swift Radio Pro](https://github.com/swiftcodex/Swift-Radio-Pro).
